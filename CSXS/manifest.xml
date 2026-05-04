@@ -2,12 +2,12 @@
 <ExtensionManifest
   ExtensionBundleId="com.textframeinspector.plugin"
   ExtensionBundleName="TextFrameInspector"
-  ExtensionBundleVersion="1.1.0"
+  ExtensionBundleVersion="1.0.0"
   Version="7.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
   <ExtensionList>
-    <Extension Id="com.textframeinspector.plugin.panel" Version="1.1.0"/>
+    <Extension Id="com.textframeinspector.plugin.panel" Version="1.0.0"/>
   </ExtensionList>
 
   <ExecutionEnvironment>

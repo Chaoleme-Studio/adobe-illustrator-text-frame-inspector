@@ -4,7 +4,7 @@
 
 Text Frame Inspector is an Adobe Illustrator panel for finding hidden, risky, or forgotten text frames before delivery, print, or export. It scans every text frame in the active document, flags placeholder-style copy, draws temporary position highlights on the artboard, and lets users jump from a result list to the matching object.
 
-Current version: `1.1.0`
+Current version: `1.0.0`
 
 ## What It Does
 
@@ -108,13 +108,13 @@ reg add "HKCU\Software\Adobe\CSXS.11" /v PlayerDebugMode /t REG_SZ /d 1 /f
 Build ZIP locally:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\build-release.ps1 -Version 1.1.0
+powershell -ExecutionPolicy Bypass -File .\scripts\build-release.ps1 -Version 1.0.0
 ```
 
 Build EXE locally:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\build-exe.ps1 -Version 1.1.0
+powershell -ExecutionPolicy Bypass -File .\scripts\build-exe.ps1 -Version 1.0.0
 ```
 
 Requires Inno Setup Compiler (`ISCC.exe`) in `PATH`.
@@ -122,23 +122,46 @@ Requires Inno Setup Compiler (`ISCC.exe`) in `PATH`.
 Build ZXP locally:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\build-zxp.ps1 -Version 1.1.0
+powershell -ExecutionPolicy Bypass -File .\scripts\build-zxp.ps1 -Version 1.0.0
 ```
 
 Requires Adobe `ZXPSignCmd` in `PATH`.
 
-Release automation:
+Release automation (How to trigger GitHub Actions):
 
-```powershell
-git tag v1.1.0
-git push origin v1.1.0
-```
+This project is configured with a GitHub Actions auto-release workflow. A normal `git push origin main` only uploads source code and does not trigger the release build. The release workflow only runs when you push a tag starting with `v`, for example `v1.0.0`.
 
-The GitHub Actions workflow only runs on `v*` tags and produces:
+Standard release steps:
 
-- `TextFrameInspector-<version>.zip`
-- `TextFrameInspector-Setup-<version>.exe`
-- `TextFrameInspector-<version>.zxp`
+1. Commit and push source code first:
+   ```powershell
+   git add .
+   git commit -m "Release v1.0.0"
+   git push origin main
+   ```
+2. Create a version tag:
+   ```powershell
+   git tag v1.0.0
+   ```
+3. Push the tag to GitHub:
+   ```powershell
+   git push origin v1.0.0
+   ```
+
+After pushing the tag:
+- You can navigate to the **Actions** tab on your GitHub repository to check the build progress.
+- Once completed (takes a few minutes), go to the **Releases** section on the right side of the repository codebase to download the generated files:
+  - `TextFrameInspector-<version>.zxp` (for Adobe Exchange or ZXPInstaller)
+  - `TextFrameInspector-Setup-<version>.exe` (Windows installer)
+  - `TextFrameInspector-<version>.zip` (fallback archive)
+
+If Actions does not run, check these first:
+
+- You pushed `main` but did not push the tag with `git push origin v1.0.0`
+- The tag name does not start with lowercase `v`
+- GitHub Actions is disabled for the repository
+- `.github/workflows/release.yml` has not been committed to GitHub
+- The same tag was already pushed before; use a new version such as `v1.0.1`
 
 Packaging strategy:
 

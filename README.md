@@ -4,7 +4,7 @@
 
 Text Frame Inspector 是一个 Adobe Illustrator CEP 面板插件，用于在交付、印刷或导出前检查文档里的隐藏文本框、占位文本和异常文本对象。它会扫描当前文档中的所有文本框，标记疑似占位内容，在画板上绘制临时定位框，并支持从结果列表跳转到对应对象。
 
-当前版本：`1.1.0`
+当前版本：`1.0.0`
 
 ## 这个插件是做什么的
 
@@ -108,13 +108,13 @@ reg add "HKCU\Software\Adobe\CSXS.11" /v PlayerDebugMode /t REG_SZ /d 1 /f
 本地构建 ZIP：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\build-release.ps1 -Version 1.1.0
+powershell -ExecutionPolicy Bypass -File .\scripts\build-release.ps1 -Version 1.0.0
 ```
 
 本地构建 EXE：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\build-exe.ps1 -Version 1.1.0
+powershell -ExecutionPolicy Bypass -File .\scripts\build-exe.ps1 -Version 1.0.0
 ```
 
 需要本机安装 Inno Setup Compiler，也就是 `ISCC.exe`。
@@ -122,23 +122,46 @@ powershell -ExecutionPolicy Bypass -File .\scripts\build-exe.ps1 -Version 1.1.0
 本地构建 ZXP：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\build-zxp.ps1 -Version 1.1.0
+powershell -ExecutionPolicy Bypass -File .\scripts\build-zxp.ps1 -Version 1.0.0
 ```
 
 需要本机安装 Adobe `ZXPSignCmd`。
 
-发布自动化：
+发布自动化（如何触发 GitHub Actions）：
 
-```powershell
-git tag v1.1.0
-git push origin v1.1.0
-```
+本项目配置了 GitHub Actions 自动发版流程。普通 `git push origin main` 只会上传代码，不会触发 Release 打包。只有推送 `v` 开头的标签（Tag），例如 `v1.0.0`，才会触发云端打包，并在仓库的 **Releases** 页面发布安装包。
 
-GitHub Actions 只会在 `v*` tag 推送时触发，并生成三个产物：
+标准发版步骤：
 
-- `TextFrameInspector-<version>.zip`
-- `TextFrameInspector-Setup-<version>.exe`
-- `TextFrameInspector-<version>.zxp`
+1. 先提交并推送代码：
+   ```powershell
+   git add .
+   git commit -m "Release v1.0.0"
+   git push origin main
+   ```
+2. 添加版本标签：
+   ```powershell
+   git tag v1.0.0
+   ```
+3. 推送标签到 GitHub：
+   ```powershell
+   git push origin v1.0.0
+   ```
+
+推送成功后：
+- 你可以前往 GitHub 仓库页面的 **Actions** 标签夹，查看打包进度。
+- 等待几分钟运行结束后，前往仓库首页右侧的 **Releases** 即可下载生成的三个最终产物：
+  - `TextFrameInspector-<version>.zxp`（供 Adobe 插件市场或 ZXPInstaller 使用）
+  - `TextFrameInspector-Setup-<version>.exe`（供 Windows 用户双击安装使用）
+  - `TextFrameInspector-<version>.zip`（绿色解压版供备用）
+
+如果没有触发 Actions，优先检查：
+
+- 是否只执行了 `git push origin main`，但没有执行 `git push origin v1.0.0`
+- tag 名是否以小写 `v` 开头，例如 `v1.0.0`
+- GitHub 仓库的 **Actions** 功能是否已启用
+- `.github/workflows/release.yml` 是否已经提交到 GitHub
+- 同一个 tag 是否已经推送过；如果要重发，建议使用新的版本号，例如 `v1.0.1`
 
 打包策略：
 
