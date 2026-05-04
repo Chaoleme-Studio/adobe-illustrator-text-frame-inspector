@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve version
+        shell: pwsh
+        run: |
+          $version = "${env:GITHUB_REF_NAME}" -replace '^v', ''
+          "TFI_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Build ZIP package
+        shell: pwsh
+        run: powershell -ExecutionPolicy Bypass -File .\scripts\build-release.ps1 -Version $env:TFI_VERSION
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup -y
+
+      - name: Build EXE installer
+        shell: pwsh
+        run: powershell -ExecutionPolicy Bypass -File .\scripts\build-exe.ps1 -Version $env:TFI_VERSION
+
+      - name: Download ZXPSignCmd
+        shell: pwsh
+        run: |
+          $url = "https://github.com/Adobe-CEP/CEP-Resources/raw/master/ZXPSignCMD/4.1.3/win64/ZXPSignCmd.exe"
+          New-Item -ItemType Directory -Path "$env:GITHUB_WORKSPACE\tools" -Force | Out-Null
+          Invoke-WebRequest -Uri $url -OutFile "$env:GITHUB_WORKSPACE\tools\ZXPSignCmd.exe"
+          "$env:GITHUB_WORKSPACE\tools" | Out-File -FilePath $env:GITHUB_PATH -Append
+
+      - name: Build ZXP package
+        shell: pwsh
+        env:
+          ZXP_CERT_PASSWORD: ${{ secrets.ZXP_CERT_PASSWORD }}
+        run: powershell -ExecutionPolicy Bypass -File .\scripts\build-zxp.ps1 -Version $env:TFI_VERSION
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/TextFrameInspector-${{ env.TFI_VERSION }}.zip
+            release/TextFrameInspector-Setup-${{ env.TFI_VERSION }}.exe
+            release/TextFrameInspector-${{ env.TFI_VERSION }}.zxp
