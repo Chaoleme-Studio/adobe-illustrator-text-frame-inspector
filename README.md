@@ -163,6 +163,15 @@ powershell -ExecutionPolicy Bypass -File .\scripts\build-zxp.ps1 -Version 1.0.0
 - `.github/workflows/release.yml` 是否已经提交到 GitHub
 - 同一个 tag 是否已经推送过；如果要重发，建议使用新的版本号，例如 `v1.0.1`
 
+如果必须删除并重发同一个 tag：
+
+```powershell
+git tag -d v1.0.0
+git push origin :refs/tags/v1.0.0
+git tag v1.0.0
+git push origin v1.0.0
+```
+
 打包策略：
 
 - `zip` 是最简单的备用分发格式。

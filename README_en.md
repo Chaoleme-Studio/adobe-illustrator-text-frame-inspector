@@ -163,6 +163,15 @@ If Actions does not run, check these first:
 - `.github/workflows/release.yml` has not been committed to GitHub
 - The same tag was already pushed before; use a new version such as `v1.0.1`
 
+If you must delete and republish the same tag:
+
+```powershell
+git tag -d v1.0.0
+git push origin :refs/tags/v1.0.0
+git tag v1.0.0
+git push origin v1.0.0
+```
+
 Packaging strategy:
 
 - `zip` is the simplest fallback distribution.
