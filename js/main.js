@@ -1,5 +1,6 @@
 var cs = new CSInterface();
 var allFrames = [];
+var riskOnly = false;
 var STORAGE_KEY = 'text-frame-inspector-settings-v1';
 var LANG_KEY = 'text-frame-inspector-lang-v1';
 var defaultSettings = {
@@ -38,6 +39,7 @@ var i18n = {
     tabMain: '当前页',
     tabSettings: '配置',
     searchPlaceholder: '搜索文字内容 / Search text...',
+    filterRiskTitle: '只看风险项',
     scanLabel: '扫描所有文字',
     scanHint: '列出全部文本框，标出风险项',
     highlightAllLabel: '高亮所有文本框位置',
@@ -66,6 +68,7 @@ var i18n = {
     tabMain: 'Inspect',
     tabSettings: 'Settings',
     searchPlaceholder: 'Search text...',
+    filterRiskTitle: 'Show risky items only',
     scanLabel: 'Scan Text Frames',
     scanHint: 'List all text frames and flag risky ones',
     highlightAllLabel: 'Highlight All Text Frames',
@@ -139,6 +142,11 @@ function applyLanguage(lang) {
   document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
     var key = el.getAttribute('data-i18n-placeholder');
     if (dict[key]) el.setAttribute('placeholder', dict[key]);
+  });
+
+  document.querySelectorAll('[data-i18n-title]').forEach(function (el) {
+    var key = el.getAttribute('data-i18n-title');
+    if (dict[key]) el.setAttribute('title', dict[key]);
   });
 }
 
@@ -215,7 +223,14 @@ function bindActions() {
   });
 
   document.getElementById('search-box').addEventListener('input', function () {
-    filterList(this.value.trim());
+    applyListFilters();
+  });
+
+  document.getElementById('btn-filter-risk').addEventListener('click', function () {
+    riskOnly = !riskOnly;
+    this.classList.toggle('active', riskOnly);
+    this.setAttribute('aria-pressed', riskOnly ? 'true' : 'false');
+    applyListFilters();
   });
 
   document.getElementById('btn-save-settings').addEventListener('click', function () {
@@ -258,12 +273,9 @@ function renderList(frames, keyword) {
     li.className = 'frame-item ' + (frame.hasRisk ? 'risk' : 'clean');
     li.dataset.index = frame.index;
     li.dataset.content = (frame.content || '').toLowerCase();
+    li.dataset.rawContent = frame.content || '(空)';
 
-    var displayText = esc(frame.content || '(空)');
-    if (keyword) {
-      var re = new RegExp('(' + escRegex(keyword) + ')', 'gi');
-      displayText = esc(frame.content || '(空)').replace(re, '<mark>$1</mark>');
-    }
+    var displayText = formatFrameContent(frame.content || '(空)', keyword);
 
     var tags = (frame.risks || []).map(function (r) {
       return '<span class="tag">' + esc(r) + '</span>';
@@ -285,22 +297,38 @@ function renderList(frames, keyword) {
     list.appendChild(li);
   });
 
-  if (keyword) filterList(keyword);
+  applyListFilters();
 }
 
-function filterList(keyword) {
+function applyListFilters() {
   var items = document.querySelectorAll('.frame-item');
+  var keyword = document.getElementById('search-box').value.trim();
   var kl = keyword.toLowerCase();
   var visible = 0;
 
   items.forEach(function (li) {
     var content = li.dataset.content || '';
-    var match = !kl || content.indexOf(kl) >= 0;
+    var textMatch = !kl || content.indexOf(kl) >= 0;
+    var riskMatch = !riskOnly || li.classList.contains('risk');
+    var match = textMatch && riskMatch;
+    var contentEl = li.querySelector('.frame-content');
+
+    if (contentEl) {
+      contentEl.innerHTML = formatFrameContent(li.dataset.rawContent || '', keyword);
+    }
+
     li.classList.toggle('hidden-item', !match);
     if (match) visible++;
   });
 
-  document.getElementById('search-count').textContent = keyword ? visible + ' 条' : '';
+  document.getElementById('search-count').textContent = keyword || riskOnly ? visible + ' 条' : '';
+}
+
+function formatFrameContent(content, keyword) {
+  var displayText = esc(content || '(空)');
+  if (!keyword) return displayText;
+  var re = new RegExp('(' + escRegex(keyword) + ')', 'gi');
+  return displayText.replace(re, '<mark>$1</mark>');
 }
 
 function focusFrameItem(item, index) {

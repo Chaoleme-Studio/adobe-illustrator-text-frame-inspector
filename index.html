@@ -27,11 +27,6 @@
     </nav>
 
     <section id="panel-main" class="panel-view active">
-      <div class="search-wrap">
-        <input id="search-box" type="text" placeholder="搜索文字内容 / Search text…" autocomplete="off" data-i18n-placeholder="searchPlaceholder"/>
-        <span class="search-count" id="search-count"></span>
-      </div>
-
       <section class="actions">
         <button id="btn-scan" class="btn btn-blue">
           <span class="btn-icon">📋</span>
@@ -67,6 +62,16 @@
       </section>
 
       <section class="results-panel">
+        <div class="results-tools">
+          <div class="search-wrap">
+            <input id="search-box" type="text" placeholder="搜索文字内容 / Search text…" autocomplete="off" data-i18n-placeholder="searchPlaceholder"/>
+            <span class="search-count" id="search-count"></span>
+          </div>
+          <button id="btn-filter-risk" class="icon-action" type="button" title="只看风险项" data-i18n-title="filterRiskTitle" aria-pressed="false">
+            ⚠
+          </button>
+        </div>
+
         <div class="results-header" id="results-header" style="display:none">
           <span id="results-count"></span>
           <span id="results-risk"></span>
