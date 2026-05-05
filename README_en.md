@@ -31,6 +31,14 @@ Main features:
 - Configure sensitive prefixes, highlight colors, and stroke widths
 - Switch the panel UI between Chinese and English
 
+The main panel is used to scan text frames, search results, filter risky items, and locate matching text frames on the Illustrator artboard:
+
+![Text Frame Inspector main panel](_doc/home_page.png)
+
+The settings panel is used to configure sensitive prefixes, highlight colors, and stroke widths:
+
+![Text Frame Inspector settings panel](_doc/config_page.png)
+
 Compatibility:
 
 - Recommended: Adobe Illustrator 2023 and newer

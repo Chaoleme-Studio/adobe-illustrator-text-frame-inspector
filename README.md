@@ -31,6 +31,14 @@ Text Frame Inspector 是一个 Adobe Illustrator CEP 面板插件，用于在交
 - 配置敏感词前缀、高亮颜色和线框粗细
 - 面板界面支持中文和英文切换，默认中文
 
+主界面用于扫描文本框、搜索列表、只看风险项，并在 Illustrator 画板中定位问题文本框：
+
+![Text Frame Inspector 主界面](_doc/home_page.png)
+
+配置页用于修改敏感词前缀、高亮颜色和线框粗细：
+
+![Text Frame Inspector 配置页](_doc/config_page.png)
+
 兼容性：
 
 - 推荐环境：Adobe Illustrator 2023 及以上
