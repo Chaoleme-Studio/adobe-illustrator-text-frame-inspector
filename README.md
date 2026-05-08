@@ -185,3 +185,13 @@ git push origin v1.0.0
 - `zip` 是最简单的备用分发格式。
 - `exe` 适合面向 Windows 用户直接分发。
 - `zxp` 是 CEP 扩展更正式的插件包格式，适合 Adobe 生态分发流程。
+
+
+
+## 社区
+
+[LINUX DO](https://linux.do/)
+
+## 开源协议
+
+本项目基于 [MIT](LICENSE) 协议开源。

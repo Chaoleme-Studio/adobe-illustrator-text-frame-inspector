@@ -185,3 +185,13 @@ Packaging strategy:
 - `zip` is the simplest fallback distribution.
 - `exe` is the recommended Windows customer-facing installer.
 - `zxp` is the CEP package format for Adobe-oriented distribution workflows.
+
+
+
+## 社区
+
+[LINUX DO](https://linux.do/)
+
+## 开源协议
+
+本项目基于 [MIT](LICENSE) 协议开源。
